@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://localhost:4001/api/auth/login
+method: POST
+headers:
+  "": " {{json_web_token_0n8x}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\" : \"Umesh@example.com\",\r
+
+    \  \"password\": \"umesh@12345\"\r
+
+    }"
+order: 2000

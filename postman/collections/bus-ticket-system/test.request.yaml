@@ -1,0 +1,7 @@
+$kind: http-request
+url: http://localhost:4001/api/auth/test
+method: GET
+body:
+  type: json
+  content: ""
+order: 6000

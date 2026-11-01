@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://localhost:4001/api/auth/me
+method: GET
+headers:
+  Authorization: "{{bearer_token_1aql}}"
+order: 3000

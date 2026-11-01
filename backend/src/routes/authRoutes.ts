@@ -1,3 +1,4 @@
+
 // src/routes/authRoutes.ts
 import { Router } from "express";
 import {
@@ -23,15 +24,23 @@ import {
 
 const router: Router = Router();
 
-// Public
+// Test Auth Routes
+router.get("/test", (_req, res) => {
+  res.json({ message: "Auth routes are working" });
+});
+
+// Public Routes
 router.post("/register", registerValidator, validateResult, register);
+
 router.post("/login", loginValidator, validateResult, login);
+
 router.post(
   "/forgot-password",
   forgotPasswordValidator,
   validateResult,
   forgotPassword
 );
+
 router.post(
   "/reset-password",
   resetPasswordValidator,
@@ -39,8 +48,9 @@ router.post(
   resetPassword
 );
 
-// Authenticated
+// Authenticated Routes
 router.get("/me", requireAuth, getMe);
+
 router.post(
   "/change-password",
   requireAuth,
@@ -48,7 +58,13 @@ router.post(
   validateResult,
   changePassword
 );
-router.post("/send-email-verify-otp", requireAuth, sendEmailVerifyOtp);
+
+router.post(
+  "/send-email-verify-otp",
+  requireAuth,
+  sendEmailVerifyOtp
+);
+
 router.post(
   "/verify-email",
   requireAuth,

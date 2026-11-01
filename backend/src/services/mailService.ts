@@ -1,7 +1,4 @@
-
- // src/services/mailService.ts
-
-import { getMailer } from "../config/mail.js";
+import { sendMail as sendMailWithMailtrap } from "../config/mail.js";
 
 interface SendMailOptions {
   to: string;
@@ -11,15 +8,10 @@ interface SendMailOptions {
 }
 
 export async function sendMail(opts: SendMailOptions): Promise<void> {
-  const { transporter, from } = getMailer();
-
-  await transporter.sendMail({
-    from,
+  await sendMailWithMailtrap({
     to: opts.to,
     subject: opts.subject,
     html: opts.html,
-    // Nodemailer can derive a text fallback, but our own reads better in
-    // strict clients.
     text: opts.text ?? stripHtml(opts.html),
   });
 }
@@ -29,7 +21,6 @@ function stripHtml(html: string): string {
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/?(p|div|h[1-6])[^>]*>/gi, "\n")
     .replace(/<[^>]+>/g, "")
-    .replace(/\s+\n/g, "\n")
     .trim();
 }
 
@@ -42,8 +33,8 @@ export function otpEmail(params: {
   const isReset = params.purpose === "password_reset";
 
   const heading = isReset
-    ? "Reset your CargoTruck password"
-    : "Verify your CargoTruck email";
+    ? "Reset your Bus Ticket Booking password"
+    : "Verify your Bus Ticket Booking email";
 
   const subject = isReset
     ? "Your password reset code"
@@ -54,21 +45,18 @@ export function otpEmail(params: {
     : "verify your email address";
 
   const html = `
-    <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #111;">
-      <h2 style="margin-top:0">${heading}</h2>
+    <div>
+      <h2>${heading}</h2>
       <p>Hi ${escapeHtml(params.name)},</p>
-      <p>Use the code below to ${action}. It expires in <strong>${params.expiresInMinutes} minutes</strong> and can only be used once.</p>
-      <div style="font-size: 32px; letter-spacing: 8px; font-weight: bold; text-align: center; padding: 24px; background: #f6f6f6; border-radius: 8px; margin: 24px 0;">
-        ${escapeHtml(params.code)}
-      </div>
-      <p style="color:#666; font-size: 13px;">If you didn't request this, you can safely ignore this email.</p>
+      <p>Use this code to ${action}.</p>
+      <h1>${escapeHtml(params.code)}</h1>
+      <p>This code expires in ${params.expiresInMinutes} minutes.</p>
     </div>
   `;
 
   return { subject, html };
 }
 
-// Never interpolate raw user input into an HTML email body.
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")

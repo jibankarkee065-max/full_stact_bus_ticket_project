@@ -1,5 +1,5 @@
 
- // src/middleware/auth.ts
+// src/middleware/auth.ts
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import type { UserRole } from "../models/User.js";
@@ -32,7 +32,7 @@ export const requireAuth = (
       return;
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = authHeader.slice(7).trim();
 
     if (!token) {
       res.status(401).json({ message: "Invalid authorization token" });
@@ -47,8 +47,26 @@ export const requireAuth = (
     };
 
     next();
-  } catch {
-    res.status(401).json({ message: "Invalid or expired token" });
+  } catch (error) {
+    console.error("JWT verification error:", error);
+
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({
+        message: "Token expired. Please login again.",
+      });
+      return;
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({
+        message: "Invalid token: " + error.message,
+      });
+      return;
+    }
+
+    res.status(401).json({
+      message: "Authentication failed",
+    });
   }
 };
 

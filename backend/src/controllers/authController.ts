@@ -6,7 +6,7 @@ import User, { type IUser,  type UserRole } from "../models/User.js";
 import { issueOtp, verifyOtp, otpTtlMinutes } from "../services/otpService.js";
 import { sendMail, otpEmail } from "../services/mailService.js";
 
-const JWT_SECRET: string = process.env.JWT_SECRET || "fallback-secret";
+const JWT_SECRET: string = process.env.JWT_SECRET || "";
 const JWT_OPTIONS: SignOptions = { expiresIn: "7d" };
 
 interface TokenPayload {
